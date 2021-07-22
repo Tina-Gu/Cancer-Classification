@@ -1,0 +1,35 @@
+from keras import models
+from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
+
+num_classes = 2
+def cnn(train_X, test_X, train_Y, test_Y, num_classes):
+    model = Sequential()
+    model.add(Conv2D(32, (5, 5), strides = (1,1), padding='same', 
+                 input_shape=x_train.shape[1:]))  # 第一层需要指出图像的大小
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(3, 3), strides=(1,1)))
+    model.add(Conv2D(64, (5, 5), strides = (1,1)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(3, 3), strides=(1,1)))
+    model.add(Conv2D(128, (5, 5), strides = (1,1)))
+    model.add(MaxPooling2D(pool_size=(3, 3), strides=(1,1)))
+    model.add(Flatten())
+    model.add(Dense(512))
+    model.add(Activation('relu'))
+    model.add(Dense(num_classes))
+    model.add(Activation('softmax'))
+    model.summary()
+    
+    lr=0.01
+    epoch = 10000
+    opt = keras.optimizers.rmsprop(lr, decay=1e-6)
+    model.compile(loss='categorical_crossentropy',
+              optimizer=opt,metrics=['accuracy'])
+    
+
+    # here we use the test_set as the validation_set    
+    model.fit(train_X,train_Y,batch_size=128,epochs=epoch,verbose=2,
+                validation_data=(test_X,test_Y))
+    score = model.evaluate(test_X,test_Y,verbose=0)
+    print(score)
+    
